@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "bles.h"
+
+
+void bastir(struct node *r){//bastir fonksiyonu ile linked liste otomatik olarak artýrýr ve deger ekler
+	while (r!=NULL){//r null oluncaya kadar çalýþ
+		printf("%d ",r->x);//yazdýr
+		r=r->next;//r yi nexte ata
+	}
+	printf("\n");
+}
+void ekle(struct node *r,int x){//ekleme fonksiyonu oluþturuyoruz *r ve x parametreleri yazýyoruz
+	while(r->next!=NULL){//r ýn nexti null olucaya kadar çalýþacak
+		r = r->next;
+    }
+	r->next= (struct node*)malloc(sizeof(struct node));// r ýn nextine node ekliyoruz
+	r->next->x=x;//r ýn nextine data olarak x i koy
+	r=r->next->next = NULL;//r ýn nextinin nextine Null koyuyoruz her zaman nul olsun
+}
+
+struct node * ekleSirali(struct node *r,int x){//sirali ekleme fonksiyonu oluþturuyoruz *r ve x parametreleri yazýyoruz
+	if(r==NULL){//r ýn null olup olmadýðý kontrolü yapýlyýor
+		r = (struct node*)malloc(sizeof(struct node));//r null sa yeni bir node oluþturuluyor
+		r->next = NULL;//r ýn nextini null olarak atýyoruz
+		r -> x = x; //r ýn deðerini veriyoruz
+		return r;
+	}
+	if(r->x>x){//rootun x deðeri yeni eklemeye çalýþtýðým deðerden küçükse kutunun baþýna eklemeli root deðiþiyor
+				struct node * temp = (struct node*)malloc(sizeof(struct node));// temp oluturup yeni noda atýyoruz
+				temp -> x = x;//tempin deðerini x olarak atýyoruz
+				temp -> next = r;// tempin nexti root oldu
+				return temp;
+			}
+	struct node * iter =r;
+	while(iter->next!=NULL && iter->next->x< x){	//listenin sonuna gelmediyse ve baktýðým eleman eklemeye çalýþtýðým deðerden kuçukse bir sonraki deðere gitmeli
+			iter = iter->next;
+    }
+    	
+    struct node * temp = (struct node*)malloc(sizeof(struct node));//yeni bir temp adýnda node oluþturuyoruz
+	temp ->next = iter->next;
+	iter->next = temp;
+	temp -> x = x;
+	return r;
+}
+
+struct node * sil(struct node *r,int x){
+	struct node * temp;
+	struct node * iter = r;
+	if(r->x==x){//rootu silme iþlemi
+		temp = r;//rootu önce bir tempe atýyoruz
+		r= r->next;//sonra rootu bir sonraki düðüme atoyýruz
+		free(temp);//boþta kalan rootu tempe atadýðýmýzdan tempi bellekten kaldýrýyourz
+		return r;
+	}
+	while(iter->next !=NULL && iter->next->x != x){	//ortadaki elamanlar için//iterin nexti nulldan farklýyken ve ayný zamanda iterin nextinin x deðeri farklýyken bizim aradýðýmýz x deðerinden
+		iter = iter ->next;//bir sonraki eleman bir sonraki eleman diyerek ilerliyoruz
+	}
+	if(iter->next == NULL){
+		printf("sayi bulunamadi \n");
+		return r;
+	}
+	temp = iter->next;//tempi iterin nextine atýyoruz silme iþleminde silinen elamandan sonraki listeyi kaybetmemk için
+	iter->next=iter->next->next;//silinen elemandan sonraki nodu göstermek için
+	free(temp);//silinen elemaný ram den siliyruz c de garbage collector olmadýðý için
+	return r;
+	
+};
+
